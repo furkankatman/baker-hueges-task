@@ -23,18 +23,21 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Button Grid.Column="0" Grid.Row="0" Content="Add Dataset" Click="Button_Click"  />
-        <Label  Grid.Column="0" Grid.Row="1" VerticalAlignment="Bottom" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Grid.ColumnSpan="3">
-            All inputs must be provided in meters.</Label>
-        <TextBox Grid.Column="0" Grid.Row="2" Text="Cell Size Width" VerticalAlignment="Center" />
-        <TextBox Grid.Column="3" Grid.Row="2" Text="Cell Size Height" VerticalAlignment="Center" />
-        <TextBox Grid.Column="0" Grid.Row="3" Text="Base Horizon" VerticalAlignment="Center" />
-        <TextBox Grid.Column="3" Grid.Row="3" Text="Fluid Contact" VerticalAlignment="Center" />
-        <Button Grid.Column="0" Grid.Row="4" Content="Calculate The Volume"  />
+        <ListBox  Grid.Column="0" Grid.Row="1" VerticalAlignment="Top" FontWeight="Bold" FontSize="14" HorizontalAlignment="Left" Grid.ColumnSpan="3">
+            <ListBoxItem>All inputs must be provided in meters.</ListBoxItem>
+            <ListBoxItem>60.96 will be used as default for cell sizes unless they are provided.</ListBoxItem>
+        </ListBox>
+        <TextBox x:Name="txt_CellSizeWidth" Grid.Column="0" Grid.Row="2" Text="Cell Size Width" VerticalAlignment="Center" />
+        <TextBox x:Name="txt_CellSizeHeight" Grid.Column="3" Grid.Row="2" Text="Cell Size Height" VerticalAlignment="Center" />
+        <TextBox x:Name="txt_baseHorizon" Grid.Column="0" Grid.Row="3" Text="Base Horizon" VerticalAlignment="Center" />
+        <TextBox x:Name="txt_FluidContact" Grid.Column="3" Grid.Row="3" Text="Fluid Contact" VerticalAlignment="Center" />
+        <Button Grid.Column="0" Grid.Row="4" Content="Calculate The Volume" Click="Button_Click_1"  />
         <Label  Grid.Column="0" Grid.Row="5" VerticalAlignment="Bottom">
             Calculated Volume</Label>
-        <TextBox Grid.Column="0" Grid.Row="6" IsEnabled="False"  Text="Cubic Meter" VerticalAlignment="Center"/>
-        <TextBox Grid.Column="1" Grid.Row="6" IsEnabled="False" Text="Cubic Feet" VerticalAlignment="Center"/>
-        <TextBox Grid.Column="2" Grid.Row="6" IsEnabled="False" Text="Barrels" VerticalAlignment="Center"/>
+        <Label x:Name="lbl_Loading" Grid.Column="1" Grid.Row="4"></Label>
+        <TextBox x:Name="txt_ResultCubicMeter" Grid.Column="0" Grid.Row="6" IsEnabled="False"  Text="Cubic Meter" VerticalAlignment="Center"/>
+        <TextBox x:Name="txt_ResultCubicFeet" Grid.Column="1" Grid.Row="6" IsEnabled="False" Text="Cubic Feet" VerticalAlignment="Center"/>
+        <TextBox x:Name="txt_ResultBarrels" Grid.Column="2" Grid.Row="6" IsEnabled="False" Text="Barrels" VerticalAlignment="Center"/>
         <Border BorderThickness="1" BorderBrush="Black" Grid.ColumnSpan="3" Grid.RowSpan="5" Grid.Row="0">
 
         </Border>

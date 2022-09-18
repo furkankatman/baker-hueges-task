@@ -3,17 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Assesment_furkankatman
 {
@@ -22,6 +13,9 @@ namespace Assesment_furkankatman
     /// </summary>
     public partial class MainWindow : Window
     {
+        private JewelSuiteHelper JewelSuiteHelper;
+        private bool datasetLoading;
+        private List<int> depthValues = new List<int>();
         public MainWindow()
         {
             InitializeComponent();
@@ -29,27 +23,85 @@ namespace Assesment_furkankatman
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            bool? response = openFileDialog.ShowDialog();
-            if (response==true)
+            txt_ResultCubicMeter.Text = "";
+            txt_ResultCubicFeet.Text = "";
+            txt_ResultBarrels.Text = "";
+            datasetLoading = true;
+            lbl_Loading.Content = "Dataset is loading...".ToUpper();
+            
+            try
             {
-                string pathToFile = openFileDialog.FileName;
-                MessageBox.Show(pathToFile);
-                using (var reader = new StreamReader(pathToFile))
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                bool? response = openFileDialog.ShowDialog();
+                if (response == true)
                 {
-                    List<string> listA = new List<string>();
-                    List<string> listB = new List<string>();
-                    while (!reader.EndOfStream)
+                    string pathToFile = openFileDialog.FileName;
+                    using (var reader = new StreamReader(pathToFile))
                     {
-                        var line = reader.ReadLine();
-                        var values = line.Split(' ');
+                        while (!reader.EndOfStream)
+                        {
+                            var line = reader.ReadLine();
+                            var values = line.Split(' ');
 
-                        listA.Add(values[0]);
-                        listB.Add(values[1]);
+                            values.ToList().ForEach(x=> {
+                                depthValues.Add(int.Parse(x));
+                            });
+                        }
+                    }
+                    if(depthValues!=null && depthValues.Count > 0)
+                    {
+                        lbl_Loading.Content = "Dataset is ready.";
+                        datasetLoading = false;
                     }
                 }
-
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var baseHorizon = int.Parse(txt_baseHorizon.Text);
+                var fluidContact = int.Parse(txt_FluidContact.Text);
+                var cellSizeWidth = 60.96;
+                var cellSizeHeight = 60.96;
+
+                if (txt_CellSizeHeight.Text != "Cell Size Height")
+                {
+                    cellSizeHeight = double.Parse(txt_CellSizeHeight.Text);
+                }
+                if (txt_CellSizeWidth.Text != "Cell Size Width")
+                {
+                    cellSizeWidth = double.Parse(txt_CellSizeWidth.Text);
+                }
+                JewelSuiteHelper = new JewelSuiteHelper(depthValues, baseHorizon, fluidContact, cellSizeWidth, cellSizeHeight);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
+
+            if (datasetLoading)
+            {
+                MessageBox.Show("JewelSuite is still loading data wait for it.");
+                return;
+            }
+            if (JewelSuiteHelper == null)
+            {
+                MessageBox.Show("First fill the inputs and load the dataset");
+                return;
+            }
+            var volumeCalculatedMeter = JewelSuiteHelper.CalculateVolume(UnitEnum.CubicMeter);
+            var volumeCalculatedFeet = JewelSuiteHelper.CalculateVolume(UnitEnum.Cubicfeet);
+            var volumeCalculatedBarrels = JewelSuiteHelper.CalculateVolume(UnitEnum.Barrels);
+            txt_ResultCubicMeter.Text = volumeCalculatedMeter + " cubic meters";
+            txt_ResultCubicFeet.Text = volumeCalculatedFeet + " cubic feet";
+            txt_ResultBarrels.Text = volumeCalculatedBarrels + " barrels";
         }
     }
 }
